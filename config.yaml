@@ -1,0 +1,98 @@
+# ============================================================
+#  JOB SCRAPER - CONFIG FILE
+#  Edit this file to customize your job search
+# ============================================================
+
+# --- Roles you are looking for ---
+roles:
+  - "Software Engineer"
+  - "Backend Engineer"
+  - "Python Developer"
+  - "Full Stack Engineer"
+
+# --- Output settings ---
+output:
+  filename: "jobs_output"
+  format: "xlsx"
+  enrich_linkedin: false    # set to true to auto-find LinkedIn URLs
+
+# --- Sources ---
+sources:
+
+  # ✅ GREENHOUSE
+  - name: "Stripe"
+    type: greenhouse
+    url: "https://boards.greenhouse.io/stripe"
+    enabled: true
+
+  - name: "Airbnb"
+    type: greenhouse
+    url: "https://boards.greenhouse.io/airbnb"
+    enabled: true
+
+  - name: "Robinhood"
+    type: greenhouse
+    url: "https://boards.greenhouse.io/robinhood"
+    enabled: true
+
+  - name: "Figma"
+    type: greenhouse
+    url: "https://boards.greenhouse.io/figma"
+    enabled: true
+
+  # ✅ LEVER
+  - name: "Payjoy"
+    type: lever
+    url: "https://jobs.lever.co/payjoy"
+    enabled: true
+
+  # ✅ ASHBY
+  - name: "Zapier"
+    type: ashby
+    url: "https://jobs.ashbyhq.com/zapier"
+    enabled: true
+
+  - name: "Perplexity"
+    type: ashby
+    url: "https://jobs.ashbyhq.com/perplexity"
+    enabled: true
+
+  - name: "Vercel"
+    type: ashby
+    url: "https://jobs.ashbyhq.com/vercel"
+    enabled: true
+
+  - name: "Supabase"
+    type: ashby
+    url: "https://jobs.ashbyhq.com/supabase"
+    enabled: true
+
+  # ✅ REMOTEOK
+  - name: "RemoteOK"
+    type: indeed
+    url: "https://remoteok.com/api"
+    enabled: true
+
+  # ✅ GITHUB LIST
+  - name: "Hiring Without Whiteboards"
+    type: github_list
+    url: "https://raw.githubusercontent.com/poteto/hiring-without-whiteboards/master/README.md"
+    enabled: true
+
+  # ⚠️ LINKEDIN (disabled by default)
+  - name: "LinkedIn - Software Engineer"
+    type: linkedin
+    method: "playwright_stealth"
+    apify_token: ""
+    url: "https://www.linkedin.com/jobs/search/?keywords=software%20engineer"
+    enabled: false
+
+  # ⚠️ CUSTOM (add your own career pages here)
+  - name: "Custom Company"
+    type: custom
+    url: "https://careers.example.com"
+    job_container: "div.job-listing"
+    role_selector: "h2.job-title"
+    link_selector: "a.apply-btn"
+    location_selector: "span.location"
+    enabled: false
