@@ -1,7 +1,6 @@
 # ============================================================
 #  YCOMBINATOR SCRAPER
 #  Scrapes workatastartup.com using Playwright
-#  No public API — uses headless browser
 # ============================================================
 
 import time
@@ -10,11 +9,6 @@ from rich.console import Console
 console = Console()
 
 def scrape_ycombinator(source, roles):
-    """
-    Scrapes jobs from workatastartup.com
-    Returns a list of job dicts matching the roles filter.
-    """
-
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
@@ -39,54 +33,71 @@ def scrape_ycombinator(source, roles):
             time.sleep(3)
 
             # Scroll to load more jobs
-            for _ in range(3):
+            for _ in range(5):
                 page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
                 time.sleep(2)
 
-            # Find job listings
+            # Get all job name divs
             job_cards = page.query_selector_all("div.job-name")
             console.print(f"  [dim]→ Found {len(job_cards)} job cards[/dim]")
 
             for card in job_cards:
                 try:
-                    # Get job title
+                    # ── Title from anchor tag ─────────────────
                     title_el = card.query_selector("a")
-                    title = title_el.inner_text().strip() if title_el else ""
+                    if not title_el:
+                        continue
 
+                    title = title_el.inner_text().strip()
                     if not title or not matches_role(title, roles):
                         continue
 
-                    # Get link
-                    link = title_el.get_attribute("href") if title_el else ""
-                    if link and not link.startswith("http"):
-                        link = f"https://www.workatastartup.com{link}"
+                    # ── Job URL ───────────────────────────────
+                    href = title_el.get_attribute("href") or ""
+                    link = f"https://www.workatastartup.com{href}" \
+                        if href.startswith("/") else href
 
-                    # Get company
-                    parent = card.evaluate_handle(
-                        "el => el.closest('.job')"
-                    )
-                    company = ""
+                    # ── Location + job type from job-details ──
                     location = ""
+                    job_type = ""
+                    try:
+                        details = card.evaluate("""
+                            el => {
+                                let p = el.nextElementSibling;
+                                if (!p) return {location: '', job_type: ''};
+                                let spans = p.querySelectorAll('span');
+                                return {
+                                    job_type: spans[0] ? spans[0].innerText.trim() : '',
+                                    location: spans[1] ? spans[1].innerText.trim() : ''
+                                };
+                            }
+                        """)
+                        location = details.get("location", "")
+                        job_type = details.get("job_type", "")
+                    except Exception:
+                        pass
 
-                    if parent:
-                        company_el = parent.query_selector(
-                            "div.company-name, a.company-name"
-                        )
-                        company = company_el.inner_text().strip() \
-                            if company_el else "YC Startup"
-
-                        loc_el = parent.query_selector(
-                            "span.job-location, div.location"
-                        )
-                        location = loc_el.inner_text().strip() \
-                            if loc_el else ""
+                    # ── Company name ──────────────────────────
+                    company = ""
+                    try:
+                        company = card.evaluate("""
+                            el => {
+                                let row = el.closest('.company-jobs-container, [class*=company]');
+                                if (!row) return '';
+                                let name = row.querySelector('.company-name, h2, h3, [class*=company-name]');
+                                return name ? name.innerText.trim() : '';
+                            }
+                        """)
+                    except Exception:
+                        pass
 
                     matched.append({
                         "role":         title,
                         "company":      company or "YC Startup",
-                        "website":      url,
+                        "website":      "https://www.workatastartup.com",
                         "job_url":      link,
                         "location":     location,
+                        "job_type":     job_type,
                         "linkedin_url": "",
                         "source_type":  "ycombinator",
                         "date_found":   "",

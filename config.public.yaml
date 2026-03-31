@@ -93,9 +93,9 @@ sources:
     enabled: true
 
   # ✅ REMOTEOK
-  - name: "RemoteOK"
+  - name: "Jobicy + RemoteOK"
     type: indeed
-    url: "https://remoteok.com/api"
+    url: "https://jobicy.com/api/v2/remote-jobs"
     enabled: true
 
   # ✅ GITHUB LIST
@@ -103,6 +103,63 @@ sources:
     type: github_list
     url: "https://raw.githubusercontent.com/poteto/hiring-without-whiteboards/master/README.md"
     enabled: false
+
+  # ✅ GREENHOUSE (new)
+  - name: "Lyft"
+    type: greenhouse
+    url: "https://boards.greenhouse.io/lyft"
+    enabled: true
+
+  - name: "Pinterest"
+    type: greenhouse
+    url: "https://boards.greenhouse.io/pinterest"
+    enabled: true
+
+  - name: "Reddit"
+    type: greenhouse
+    url: "https://boards.greenhouse.io/reddit"
+    enabled: true
+
+  - name: "Discord"
+    type: greenhouse
+    url: "https://boards.greenhouse.io/discord"
+    enabled: true
+
+  - name: "Vercel"
+    type: greenhouse
+    url: "https://boards.greenhouse.io/vercel"
+    enabled: true
+
+  - name: "Databricks"
+    type: greenhouse
+    url: "https://boards.greenhouse.io/databricks"
+    enabled: true
+
+  # ✅ ASHBY (new)
+  - name: "Notion"
+    type: ashby
+    url: "https://jobs.ashbyhq.com/notion"
+    enabled: true
+
+  - name: "Linear"
+    type: ashby
+    url: "https://jobs.ashbyhq.com/linear"
+    enabled: true
+
+  - name: "OpenAI"
+    type: ashby
+    url: "https://jobs.ashbyhq.com/openai"
+    enabled: true
+
+  - name: "Cursor"
+    type: ashby
+    url: "https://jobs.ashbyhq.com/cursor"
+    enabled: true
+
+  - name: "Replit"
+    type: ashby
+    url: "https://jobs.ashbyhq.com/replit"
+    enabled: true
 
   # ✅ YCOMBINATOR
   - name: "YCombinator"
