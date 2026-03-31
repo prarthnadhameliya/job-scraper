@@ -1,16 +1,13 @@
 # ============================================================
-#  JOB SCRAPER - CONFIG FILE
-#  Edit this file to customize your job search
+#  PUBLIC SHEET CONFIG
+#  This config runs the public Google Sheet
+#  Targets: All software engineering roles, All locations
 # ============================================================
 
-# --- Roles you are looking for ---
 roles:
   use_ai: false
   api_key: ""
-  description: "Any software engineering role including frontend, backend,
-    full stack, mobile, C++, Java, Python, any programming or coding role,
-    software developer, programmer, associate engineer, internships,
-    new grad positions, founding engineer roles"
+  description: "Any software engineering role"
   keywords:
     - "engineer"
     - "developer"
@@ -27,15 +24,19 @@ roles:
     - "backend"
     - "frontend"
 
-# --- Output settings ---
+filters:
+  locations: []
+  experience: []
+  job_types: []
+  days_old: 0
+
 output:
-  filename: "jobs_output"
+  filename: "jobs_public"
   format: "xlsx"
-  enrich_linkedin: false    # set to true to auto-find LinkedIn URLs
+  enrich_linkedin: false
   sheet_name: "Job Scraper - Live"
   sheet_id: "16JWn9ueySrsHxvMSQ6TxiPIRKdEfggKoC4cdK3GLphg"
 
-# --- Sources ---
 sources:
 
   # ✅ GREENHOUSE
@@ -59,6 +60,16 @@ sources:
     url: "https://boards.greenhouse.io/figma"
     enabled: true
 
+  - name: "Dropbox"
+    type: greenhouse
+    url: "https://boards.greenhouse.io/dropbox"
+    enabled: true
+
+  - name: "Coinbase"
+    type: greenhouse
+    url: "https://boards.greenhouse.io/coinbase"
+    enabled: true
+
   # ✅ LEVER
   - name: "Payjoy"
     type: lever
@@ -76,11 +87,6 @@ sources:
     url: "https://jobs.ashbyhq.com/perplexity"
     enabled: true
 
-  - name: "Vercel"
-    type: ashby
-    url: "https://jobs.ashbyhq.com/vercel"
-    enabled: true
-
   - name: "Supabase"
     type: ashby
     url: "https://jobs.ashbyhq.com/supabase"
@@ -96,27 +102,9 @@ sources:
   - name: "Hiring Without Whiteboards"
     type: github_list
     url: "https://raw.githubusercontent.com/poteto/hiring-without-whiteboards/master/README.md"
-    enabled: true
-
-  # ⚠️ LINKEDIN (disabled by default)
-  - name: "LinkedIn - Software Engineer"
-    type: linkedin
-    method: "playwright_stealth"
-    apify_token: ""
-    url: "https://www.linkedin.com/jobs/search/?keywords=software%20engineer"
     enabled: false
 
-  # ⚠️ CUSTOM (add your own career pages here)
-  - name: "Custom Company"
-    type: custom
-    url: "https://careers.example.com"
-    job_container: "div.job-listing"
-    role_selector: "h2.job-title"
-    link_selector: "a.apply-btn"
-    location_selector: "span.location"
-    enabled: false
-
-    # ✅ YCOMBINATOR
+  # ✅ YCOMBINATOR
   - name: "YCombinator"
     type: ycombinator
     url: "https://www.workatastartup.com/jobs"

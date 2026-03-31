@@ -4,3 +4,5 @@ venv/
 __pycache__/
 .DS_Store
 *.pyc
+credentials.json
+config.yaml

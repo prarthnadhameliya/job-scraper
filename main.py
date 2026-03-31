@@ -16,6 +16,9 @@ from scrapers.generic import scrape_generic
 from scrapers.custom import scrape_custom
 from exporter import export_jobs
 from enricher import enrich_jobs
+from filters import apply_filters
+from scrapers.ycombinator import scrape_ycombinator
+from ai_filter import filter_jobs_by_role
 
 console = Console()
 
@@ -48,6 +51,8 @@ def run_scraper(source, roles):
             return scrape_generic(source, roles)
         elif stype == "custom":
             return scrape_custom(source, roles)
+        elif stype == "ycombinator":
+            return scrape_ycombinator(source, roles)
         else:
             console.print(f"[red]⚠️  Unknown source type: {stype}[/red]")
             return []
@@ -83,9 +88,17 @@ def main():
 
     # Load config
     config = load_config()
-    roles = [r.lower() for r in config.get("roles", [])]
+    roles_cfg = config.get("roles", [])
+    # Keep backward compatible roles list for scrapers
+    if isinstance(roles_cfg, dict):
+        roles = [k.lower() for k in roles_cfg.get("keywords", [])]
+    else:
+        roles = [r.lower() for r in roles_cfg]
+
+    # roles = [r.lower() for r in config.get("roles", [])]
     sources = config.get("sources", [])
     output_cfg = config.get("output", {})
+    filter_cfg = config.get("filters", {})
 
     console.print(f"[dim]Roles: {', '.join(roles)}[/dim]")
     console.print(f"[dim]Sources enabled: {sum(1 for s in sources if s.get('enabled', True))}[/dim]")
@@ -108,6 +121,15 @@ def main():
         if key not in seen:
             seen.add(key)
             unique_jobs.append(job)
+
+     # AI role filter
+    console.print("\n[bold cyan]🤖 Filtering by role...[/bold cyan]")
+    unique_jobs = filter_jobs_by_role(unique_jobs, roles_cfg)
+
+    # Apply filters
+    if filter_cfg:
+        console.print("\n[bold cyan]🔽 Applying filters...[/bold cyan]")
+        unique_jobs = apply_filters(unique_jobs, filter_cfg)
 
     # Enrich with LinkedIn URLs (optional)
     if output_cfg.get("enrich_linkedin", False):
